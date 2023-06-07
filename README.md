@@ -4,6 +4,30 @@ Rentify is a full-stack web application built using the MERN (MongoDB, Express.j
 
 This README file provides an overview of the Rentify application, its features, and instructions for setting up and running the application on a local development environment.
 
+## Output:
+
+### Landing Page
+
+<img width="1440" alt="landingpage" src="https://github.com/navya0405/Rentify/assets/73122579/0bbbb1e8-5827-4a53-babd-adb693f0a606">
+
+### Property Detailed View Page
+![propertydetails](https://github.com/navya0405/Rentify/assets/73122579/e7cfaa13-0a9b-489d-806c-d7d398862d8c)
+
+
+### Mainteneance Page
+![mainteneancepage](https://github.com/navya0405/Rentify/assets/73122579/b2d5a39f-42d7-4a22-a1cb-3ead98ccdffb)
+
+### Manage Property Page
+![manageproperty](https://github.com/navya0405/Rentify/assets/73122579/f61900d8-ec96-4578-9ade-f26a662281b5)![mainteneancereq](https://github.com/navya0405/Rentify/assets/73122579/504e844c-7359-4752-ace4-b95fbc88b72a)
+
+### Mainteneance Request Page
+![mainteneancereq](https://github.com/navya0405/Rentify/assets/73122579/36b753b6-2457-4d6a-94b8-77508a948f08)
+### Payments Page
+![paymentspage](https://github.com/navya0405/Rentify/assets/73122579/37b600c8-9eca-426f-b2f0-55fc22244717)
+### Chat option
+![chatpage](https://github.com/navya0405/Rentify/assets/73122579/943e0f43-f3cf-424b-b8c1-c0826929a71a)
+
+
 ## Table of Contents
 
 - [Features](#features)
