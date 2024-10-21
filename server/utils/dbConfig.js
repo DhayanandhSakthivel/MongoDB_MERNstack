@@ -1,8 +1,7 @@
 require('dotenv').config()
 
 const config = {
-    // mongoDB: process.env.DB_Connection_String
-    mongoDB    : "mongodb+srv://HouseRentalManagementApplication:deejaynavnikSJSU@cluster0.scomigl.mongodb.net/?retryWrites=true&w=majority"
+    mongoDB: "mongodb+srv://sakthideepa77:dhaya.2003@hrent.vklg1.mongodb.net/?retryWrites=true&w=majority&appName=hrent"
 };
 
 module.exports = config;
