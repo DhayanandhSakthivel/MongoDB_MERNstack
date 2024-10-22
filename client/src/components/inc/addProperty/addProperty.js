@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { app as  storage } from "../../../config/firebaseConfig";
-import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { ref, getDownloadURL, uploadBytes, uniqueFileName } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import './addProperty.css'
 import { useSelector } from 'react-redux';
@@ -73,16 +73,22 @@ function AddPropertyForm() {
     // State to store uploaded file
 
     // Handle file upload event and update state
+    // function handleChange(event) {
+    //     setFile(event.target.files);
+    //     console.log(file)
+    // }
+
     function handleChange(event) {
         setFile(event.target.files);
-        console.log(file)
     }
 
     const handleUploadImage = async () => {
         console.log('hello')
         let imgUrl = '';
         console.log(storage)
-        const storageRef = ref(storage, `houserentalmanagement/images/${uuidv4()}`);
+        const uniqueFileName = `houserentalmanagement/images/${uuidv4()}`;
+        console.log("Storage path:", uniqueFileName);  // Log the file path in storage
+        const storageRef = ref(storage, uniqueFileName);
 
         uploadBytes(storageRef, file).then((snapshot) => {
             console.log('Uploaded a blob or file!');
@@ -93,40 +99,122 @@ function AddPropertyForm() {
         });
     }
 
+    // const handleSubmit = async (event) => {
+    //     event.preventDefault();
+    //     console.log(file)
+    //     debugger;
+    //     if (
+    //         address.trim() === '' ||
+    //         propertyType.trim() === '' ||
+    //         beds.trim() === '' ||
+    //         baths.trim() === '' ||
+    //         sqft.trim() === '' ||
+    //         price.trim() === '' ||
+    //         description.trim() === ''
+    //     ) {
+    //         setFormError(true);
+    //         return;
+    //     }
+
+    //     console.log(storage)
+    //     const storageRef = ref(storage, `houserentalmanagement/images/${uuidv4()}`);
+    //     let img = [];
+    //     for (let i = 0; i < file.length; i++) {
+
+    //         await uploadBytes(storageRef, file[i]).then((snapshot) => {
+    //             console.log('Uploaded a blob or file!');
+    //             console.log(snapshot)
+    //             getDownloadURL(snapshot.ref).then((url) => {
+    //                 img.push(url)
+    //                 console.log(url);
+    //             });
+    //         });
+    //     }
+    //     console.log(img)
+    //     await setPhotos(img);
+    //     console.log(photos)
+    //     const requestObject = {
+    //         address: address,
+    //         state: state,
+    //         city: city,
+    //         zip: zip,
+    //         contact: contact,
+    //         propertyType: propertyType,
+    //         bedNo: beds,
+    //         bathNo: baths,
+    //         sqft: sqft,
+    //         rentPrice: price,
+    //         pictures: photos,
+    //         description: description
+    //     };
+
+    //     console.log(requestObject)
+    //     debugger;
+    //     fetch('http://localhost:3001/property/create', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(requestObject)
+    //     }).then(response => {
+    //         if (!response.ok) {
+    //             throw new Error('Request failed');
+    //         }
+    //         return response.json();
+    //     })
+    //         .then(data => {
+    //             alert('Request successful');
+    //             // Do something with the response data
+    //         })
+    //         .catch(error => {
+    //             alert('Request failed: ' + error.message);
+    //         });
+    // };
+
+
     const handleSubmit = async (event) => {
+        console.log("Files array:", file);  // Log the entire file array
         event.preventDefault();
-        console.log(file)
-        debugger;
+        
         if (
-            address.trim() === '' ||
-            propertyType.trim() === '' ||
-            beds.trim() === '' ||
-            baths.trim() === '' ||
-            sqft.trim() === '' ||
-            price.trim() === '' ||
+            address.trim() === '' || propertyType.trim() === '' ||
+            beds.trim() === '' || baths.trim() === '' ||
+            sqft.trim() === '' || price.trim() === '' ||
             description.trim() === ''
         ) {
             setFormError(true);
             return;
         }
-
-        console.log(storage)
-        const storageRef = ref(storage, `houserentalmanagement/images/${uuidv4()}`);
+    
         let img = [];
         for (let i = 0; i < file.length; i++) {
-
-            await uploadBytes(storageRef, file[i]).then((snapshot) => {
-                console.log('Uploaded a blob or file!');
-                console.log(snapshot)
-                getDownloadURL(snapshot.ref).then((url) => {
-                    img.push(url)
-                    console.log(url);
-                });
-            });
+            // Log the individual file being processed
+            console.log("File at index", i, ":", file[i]);
+            
+            // Check if file exists
+            if (!file[i]) {
+                console.error("File at index", i, "is undefined or null");
+                continue;  // Skip this file and move to the next one
+            }
+    
+            // Generate a unique file name for each file
+            const uniqueFileName = `houserentalmanagement/images/${uuidv4()}`;
+            const storageRef = ref(storage, uniqueFileName);
+            
+            // Try uploading the file
+            try {
+                const snapshot = await uploadBytes(storageRef, file[i]);
+                const url = await getDownloadURL(snapshot.ref);
+                img.push(url);
+                console.log("File uploaded successfully. URL:", url);
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
         }
-        console.log(img)
-        await setPhotos(img);
-        console.log(photos)
+    
+        console.log(img);
+        setPhotos(img);
+        
         const requestObject = {
             address: address,
             state: state,
@@ -138,12 +226,10 @@ function AddPropertyForm() {
             bathNo: baths,
             sqft: sqft,
             rentPrice: price,
-            pictures: photos,
+            pictures: img,
             description: description
         };
-
-        console.log(requestObject)
-        debugger;
+    
         fetch('http://localhost:3001/property/create', {
             method: 'POST',
             headers: {
@@ -155,15 +241,14 @@ function AddPropertyForm() {
                 throw new Error('Request failed');
             }
             return response.json();
-        })
-            .then(data => {
-                alert('Request successful');
-                // Do something with the response data
-            })
-            .catch(error => {
-                alert('Request failed: ' + error.message);
-            });
+        }).then(data => {
+            alert('Request successful');
+        }).catch(error => {
+            alert('Request failed: ' + error.message);
+        });
     };
+    
+    
 
     return (
         <div>
